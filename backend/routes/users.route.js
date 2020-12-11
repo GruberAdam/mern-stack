@@ -55,12 +55,12 @@ router.route("/:id").put((req, res) => {
   console.log("In the users/" + req.params.id + " update router");
 
   const username = req.body.username;
-  const age = req.body.age;
-  const userUpdates = { username: username, age: age };
+  const email = req.body.email;
+  const userUpdates = { username: username, email: email };
 
-  User.findByIdAndUpdate(req.body.id, userUpdates)
+  User.findByIdAndUpdate(req.body.id, userUpdates, {useFindAndModify: false, new: true})
     .then(() => res.status(200).json("User sucessfully updated"))
-    .catch((err) => res.status(400).json("Error when updating a user :" + err));
+    .catch((err) => res.status(400).json("Error when   updating a user :" + err));
 });
 
 module.exports = router;
