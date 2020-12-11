@@ -40,9 +40,14 @@ connection.once("open", () => {
 
 /* ROUTES */
 const usersRouter = require("./routes/users.route");
+const rootRouter = require("./routes/root.route");
+
+app.use("/", rootRouter );
+
 
 app.use("/users", usersRouter);
 
-app.listen(port, () => {
+app.listen(port, (err) => {
+  /* Manage error */
   console.log("Listening to port ", port);
 });
