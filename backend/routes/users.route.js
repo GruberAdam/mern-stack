@@ -35,7 +35,7 @@ router.route("/:id").get((req, res) => {
   User.findById(req.params.id)
     .then((user) => res.status(200).json(user))
     .catch((err) =>
-      res.status(400).json("Error when display one user : " + err)
+      res.status(400).json("Error when displaying one user : " + err)
     );
 });
 
@@ -54,13 +54,15 @@ router.route("/:id").delete((req, res) => {
 router.route("/:id").put((req, res) => {
   console.log("In the users/" + req.params.id + " update router");
 
-  const username = req.body.username;
-  const email = req.body.email;
-  const userUpdates = { username: username, email: email };
+  const newUsername = req.body.username;
+  const newEmail = req.body.email;
+  const userUpdates = { username: newUsername, email: newEmail };
 
-  User.findByIdAndUpdate(req.body.id, userUpdates, {useFindAndModify: false, new: true})
-    .then(() => res.status(200).json("User sucessfully updated"))
-    .catch((err) => res.status(400).json("Error when   updating a user :" + err));
+  User.findByIdAndUpdate({ _id: req.params.id }, userUpdates, { new: true })
+    .then(() => res.status(200).json("User succesfully updated"))
+    .catch((err) =>
+      res.status(400).json("Error when updating one user : ", err)
+    );
 });
 
 module.exports = router;
