@@ -3,11 +3,12 @@ const User = require("../models/user.model");
 
 /* index user route (display every user) */
 router.route("/").get((req, res) => {
-  console.log("Connection to the /users route");
+  console.log("In the /users route");
+
   User.find()
     .then((users) => res.status(200).json(users))
     .catch((error) =>
-      res.status(400).json("Error when displaying users: " + error)
+      res.status(400).json(`Error when displaying all users: ${error}`)
     );
 });
 
@@ -24,44 +25,47 @@ router.route("/add").post((req, res) => {
     .save()
     .then(() => res.status(200).json("User added to database !"))
     .catch((error) =>
-      res.status(400).json("Error when adding a user: " + error)
+      res.status(400).json(`Error when adding a user: ${error}`)
     );
 });
 
 /* /id user route (gets a user by ID) */
 router.route("/:id").get((req, res) => {
-  console.log("In the users/" + req.params.id + " get router");
+  console.log(`In the users/${req.params.id} get router`);
 
   User.findById(req.params.id)
     .then((user) => res.status(200).json(user))
     .catch((err) =>
-      res.status(400).json("Error when displaying one user : " + err)
+      res.status(400).json(`Error when displaying one user : ${err}`)
     );
 });
 
 /* /id user route (deletes a user by ID) */
 router.route("/:id").delete((req, res) => {
-  console.log("In the users/" + req.params.id + " delete router");
+  console.log(`In the users/${req.params.id} delete router`);
 
   User.findByIdAndDelete(req.params.id)
     .then(() => res.status(200).json("User succesfully deleted"))
     .catch((err) =>
-      res.status(400).json("Error when deleting a user : " + err)
+      res.status(400).json(`Error when deleting a user : ${err}`)
     );
 });
 
 /* /id user route (updates a user by ID) */
 router.route("/:id").put((req, res) => {
-  console.log("In the users/" + req.params.id + " update router");
+  console.log(`In the users/${req.params.id} update router`);
 
   const newUsername = req.body.username;
   const newEmail = req.body.email;
   const userUpdates = { username: newUsername, email: newEmail };
 
-  User.findByIdAndUpdate({ _id: req.params.id }, userUpdates, { new: true })
+  User.findByIdAndUpdate({ _id: req.params.id }, userUpdates, {
+    new: true,
+    runValidators: true,
+  })
     .then(() => res.status(200).json("User succesfully updated"))
     .catch((err) =>
-      res.status(400).json("Error when updating one user : ", err)
+      res.status(400).json(`Error when updating one user : ${err}`)
     );
 });
 

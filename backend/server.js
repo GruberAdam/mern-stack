@@ -29,7 +29,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .catch((error) => {
-    console.error("Connection with mongoDB failed, error : ", error);
+    console.error(`Connection with mongoDB failed, error : ${error}`);
   });
 
 const connection = mongoose.connection;
@@ -42,12 +42,10 @@ connection.once("open", () => {
 const usersRouter = require("./routes/users.route");
 const rootRouter = require("./routes/root.route");
 
-app.use("/", rootRouter );
-
-
+app.use("/", rootRouter);
 app.use("/users", usersRouter);
 
 app.listen(port, (err) => {
   /* Manage error */
-  console.log("Listening to port ", port);
+  console.log(`Listening to port ${port}`);
 });
