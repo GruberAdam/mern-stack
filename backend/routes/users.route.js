@@ -62,6 +62,7 @@ router.route("/:id").put((req, res) => {
   User.findByIdAndUpdate({ _id: req.params.id }, userUpdates, {
     new: true,
     runValidators: true,
+    useFindAndModify : false,
   })
     .then(() => res.status(200).json("User succesfully updated"))
     .catch((err) =>
