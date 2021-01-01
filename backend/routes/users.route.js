@@ -1,5 +1,7 @@
 const router = require("express").Router();
 const User = require("../models/user.model");
+const { userValidation } = require("../validations/user.validation");
+const bcrypt = require("bcrypt");
 
 /* index user route (display every user) */
 router.route("/").get((req, res) => {
@@ -13,13 +15,29 @@ router.route("/").get((req, res) => {
 });
 
 /* /add user route (adds a user to DB) */
-router.route("/add").post((req, res) => {
+router.route("/add").post(async (req, res) => {
   console.log("In the users/add route");
+
+  const { error } = userValidation(req.body);
+  if (error) return res.status(400).json(error.details[0].message);
 
   const username = req.body.username;
   const email = req.body.email;
   const password = req.body.password;
-  const newUser = new User({ username, email, password });
+  let hashedPassword;
+
+  await bcrypt
+    .genSalt(10)
+    .then(async (salt) => {
+      hashedPassword = await bcrypt.hash(password, salt);
+    })
+    .catch((error) => console.log(`Error when gen a salt : ${error}`));
+
+  const newUser = new User({
+    username: username,
+    email: email,
+    password: hashedPassword,
+  });
 
   newUser
     .save()
@@ -62,7 +80,7 @@ router.route("/:id").put((req, res) => {
   User.findByIdAndUpdate({ _id: req.params.id }, userUpdates, {
     new: true,
     runValidators: true,
-    useFindAndModify : false,
+    useFindAndModify: false,
   })
     .then(() => res.status(200).json("User succesfully updated"))
     .catch((err) =>
