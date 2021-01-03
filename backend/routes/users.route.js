@@ -73,13 +73,15 @@ router.route("/:id").delete((req, res) => {
 router.route("/:id").put((req, res) => {
   console.log(`In the users/${req.params.id} update router`);
 
+  const { error } = userValidation(req.body);
+  if (error) return res.status(400).json(error.details[0].message);
+
   const newUsername = req.body.username;
   const newEmail = req.body.email;
   const userUpdates = { username: newUsername, email: newEmail };
 
   User.findByIdAndUpdate({ _id: req.params.id }, userUpdates, {
     new: true,
-    runValidators: true,
     useFindAndModify: false,
   })
     .then(() => res.status(200).json("User succesfully updated"))
